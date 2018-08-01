@@ -47,7 +47,7 @@ def gradientDescent(X,Y,model,learningRate=0.01,maxIter=10000,tol=1.e-1):
         step += 1
         if step%25==0 :
             print('loss:{0}\tdiff:{1}'.format(loss,diff))
-    print(model['loss'].eval(session=sess))
+    # print(model['loss'].eval(session=sess))
 
 if __name__ == '__main__':
     dimension = 30
