@@ -28,11 +28,11 @@ def create_linear_svm_model(dimenssion,alpha=0.01):
     """
     np.random.seed(1024)
     x = tf.placeholder(tf.float64, shape=[None,dimenssion], name='x')
-    y = tf.placeholder(tf.float64, shape=[1,None], name="y")
+    y = tf.placeholder(tf.float64, shape=[None,1], name="y")
     A = tf.Variable(np.random.random([dimenssion,1]))
     b = tf.Variable(np.random.random([1,1]))
-    z= tf.add(tf.matmul(x, A, name=None),b)
-    m = tf.matmul(z,tf.transpose(y))
+    z= tf.add(tf.matmul(x, A, name=None),b)#[None,1]
+    m = tf.matmul(tf.transpose(z),y)
     loss = tf.reduce_mean(tf.maximum(np.float64(0),tf.subtract(np.float64(1.0),m)))
     model = {"loss": loss, "x": x,"y": y, "A": A,"b":b}
     return model
@@ -48,7 +48,7 @@ def gradientDescent(X,Y,model,learningRate=0.01,maxIter=10000,tol=1.e-5):
     step =0 
     diff = np.inf
     pre_loss = np.inf
-    print(Y.shape)
+    print(X.shape,Y.shape)
     while step<maxIter and diff>tol:
         _,loss = sess.run(
             [optimizer,model['loss']],
@@ -61,7 +61,6 @@ def gradientDescent(X,Y,model,learningRate=0.01,maxIter=10000,tol=1.e-5):
 
 if __name__=='__main__':
     x_vals,y_vals = getData()
-    print(x_vals.shape,y_vals.shape,y_vals.transpose().shape)
     x_train,y_train,x_test,y_test = utils.split_train_test(x_vals,y_vals)
     model = create_linear_svm_model(x_train.shape[1])
-    gradientDescent(x_train,y_train,model)
+    gradientDescent(x_train,y_train.reshape(-1,1),model)
