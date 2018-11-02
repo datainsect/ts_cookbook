@@ -22,6 +22,13 @@ def split_X_Y(train_df,test_df):
     test_Y = test_df[[n-1]]
     return (train_X,train_Y,test_X,test_Y)
 
+def split_X_Y_sp(train_df,test_df):
+    n = train_df.columns.size
+    train_X = train_df[[x for x in xrange(2,n)]]
+    train_Y = train_df[[1]]
+    test_X = test_df[[x for x in xrange(2,n)]]
+    test_Y = test_df[[1]]
+    return (train_X,train_Y,test_X,test_Y)
 
 def normalize_columns(m):
     max = m.max(axis=0)
@@ -75,15 +82,17 @@ def FM_on_diabetes():
     gradientDescent(x_train,y_train,x_test,y_test,model,learningRate=0.0004,maxIter=100000,tol=1.e-7)   
 
 
-def FM_on_sp():
+def FM_on_sp(learningRate=0.00000000000001,maxIter=100000,tol=1.e-7):
     train_df,test_df =  read_data('tr.rx.app.sp','va.rx.app.sp',sep=' ')
-    x_train,y_train,x_test,y_test = split_X_Y(train_df,test_df)
+    x_train,y_train,x_test,y_test = split_X_Y_sp(train_df,test_df)
     k=5
-    x_train=normalize_columns(x_train) 
-    x_test=normalize_columns(x_test) 
+    # x_train=normalize_columns(x_train)
+    # x_train.drop([12],axis=1) 
+    # x_test=normalize_columns(x_test)
+    # x_test.drop([12],axis=1) 
     model = createFMModel(x_train.shape[1],k)
-    gradientDescent(x_train,y_train,x_test,y_test,model,learningRate=0.0004,maxIter=100000,tol=1.e-7)   
+    gradientDescent(x_train,y_train,x_test,y_test,model,learningRate,maxIter,tol)   
 
 
 if __name__ == "__main__":
-    FM_on_sp()
+    FM_on_sp(learningRate=0.00000000000001)
